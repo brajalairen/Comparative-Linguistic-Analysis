@@ -18,20 +18,20 @@ from nrclex import NRCLex
 print("Enter ""1"" for human sample analysis")
 print("Enter ""2"" for machine generated sample analysis")
 choice=int(input("Enter choice: "))
-from google.colab import files
-uploaded = files.upload()
 
 def extract_dataset():
   if choice==1:
     originals = []
-    for filename in uploaded.keys():
+    files=input("Enter the JSON filenames separated by commas: ")
+    filenames=[f.strip() for f in files.split(",")]
+    for filename in filenames:
       with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
       originals.extend(data["original"])
     df = pd.DataFrame({"text": originals})
     return df, "Human"
   elif choice==2:
-    filename = list(uploaded.keys())[0]
+    filename = input("Enter the JSON filename: ")
     with open(filename, "r", encoding="utf-8") as f: data = json.load(f)
     df = pd.DataFrame({"text": data["sampled"]})
     return df, filename.replace(".json","")
@@ -138,5 +138,3 @@ output_file = f"{name}_OutputTask1.xlsx"
 result.to_excel(output_file,index=False)
 print(result)
 print(f"Saved successfully as {output_file}")
-
-files.download(output_file)
